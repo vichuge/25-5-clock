@@ -8,10 +8,6 @@ const App = () => {
   const [display, setDisplay] = useState(work);
   const [turn, setTurn] = useState('Session');
 
-  useEffect(() => {
-    setDisplay(work);
-  }, [work]);
-
   const upRest = () => {
     setRest(rest + 1);
   };
@@ -35,15 +31,6 @@ const App = () => {
       localStorage.clear();
       localStorage.setItem('interval-id', interval);
   };
-
-  useEffect(() => {
-    if (display < 0) {
-      pause();
-      console.log('I enter on useEffect and I pause');
-      console.log(display);
-      update();
-    }
-  }, [display]);
 
   const pause = () => {
     console.log('I click pause');
@@ -69,22 +56,33 @@ const App = () => {
     }
   }
 
-  // useEffect(() => {
-  //   play();
-  // }, [turn]);
+  const repeat = () => {
+    // setTurn('Session');
+    setDisplay(work);
+    pause();
+  };
+
+  useEffect(() => {
+    setDisplay(work);
+  }, [work]);
+
+  useEffect(() => {
+    if (display < 0) {
+      pause();
+      console.log('I enter on useEffect and I pause');
+      console.log(display);
+      update();
+    }
+  }, [display]);
+
   const isInitialMount = useRef(true);
   useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-    } else {
-        play();
-    }
-  }, [turn]);
-
-  const repeat = () => {
-    play();
-    setTurn('Session');
-  };
+  if (isInitialMount.current) {
+     isInitialMount.current = false;
+  } else {
+      play();
+  }
+}, [turn]);
 
   return (
     <div className="container">
