@@ -1,9 +1,12 @@
 import { ArrowDownCircleFill, ArrowRepeat, ArrowUpCircleFill, PauseCircleFill, PlayCircleFill } from 'react-bootstrap-icons';
 import './App.scss';
 import { useEffect, useState, useRef } from 'react';
+import sound from './pupu_tururu.mp3';
 
-const WORK = 5;
-const REST = 3;
+const WORK = 1500;
+const REST = 300;
+// const WORK = 5;
+// const REST = 3;
 
 const App = () => {
   const [rest, setRest] = useState(REST);
@@ -11,32 +14,46 @@ const App = () => {
   const [display, setDisplay] = useState(work);
   const [turn, setTurn] = useState('Session');
   const [flow, setFlow] = useState(false);
+  const [breakAudio, setBreakAudio] = useState(new Audio(sound));
 
-  // const convTime = (time) => {
-  //   const sec = time * 60;
-  //   const minutes = Math.floor(sec / 60);
-  //   const seconds = sec - minutes * 60;
-  //   return pad(minutes) + ':' + pad(seconds);
-  // };
+  const playBreakSound = () => {
+    breakAudio.currentTime = 0;
+    breakAudio.play();
+  }
 
-  // const pad = (d) => {
-  //   return (d < 10) ? '0' + d.toString() : d.toString();
-  // }
+  const convTime = (sec) => {
+    // const sec = time * 60;
+    const minutes = Math.floor(sec / 60);
+    const seconds = sec - minutes * 60;
+    return pad(minutes) + ':' + pad(seconds);
+  };
+
+  const pad = (d) => {
+    return (d < 10) ? '0' + d.toString() : d.toString();
+  }
 
   const upRest = () => {
-    setRest(rest + 1);
+    if (flow === false) {
+      setRest(rest + 60);
+    }
   };
 
   const downRest = () => {
-    setRest(rest - 1);
+    if (flow === false) {
+      setRest(rest - 60);
+    }
   };
 
   const upWork = () => {
-    setWork(work + 1);
+    if (flow === false) {
+      setWork(work + 60);
+    }
   };
 
   const downWork = () => {
-    setWork(work - 1);
+    if (flow === false) {
+      setWork(work - 60);
+    }
   };
 
   const play = () => {
@@ -66,6 +83,7 @@ const App = () => {
       setDisplay((display) => display - 1);
     } else {
       console.log('I enter on else in update function when display <= 0');
+      playBreakSound();
       if (turn === 'Session') {
         console.log('change turn to break');
         setTurn('Break');
@@ -133,7 +151,7 @@ const App = () => {
                   <ArrowDownCircleFill id='break-decrement' color="#ffb145" size={30} onClick={downRest} />
                 </div>
                 <div className='col-4'>
-                  <p id='break-length'>{rest}</p>
+                  <p id='break-length'>{convTime(rest)}</p>
                 </div>
                 <div className='col-4'>
                   <ArrowUpCircleFill id='break-increment' color="#ffb145" size={30} onClick={upRest} />
@@ -151,7 +169,7 @@ const App = () => {
                   <ArrowDownCircleFill id='session-decrement' color="#ffb145" size={30} onClick={downWork} />
                 </div>
                 <div className='col-4'>
-                  <p id='session-length'>{work}</p>
+                  <p id='session-length'>{convTime(work)}</p>
                 </div>
                 <div className='col-4'>
                   <ArrowUpCircleFill id='session-increment' color="#ffb145" size={30} onClick={upWork} />
@@ -170,7 +188,7 @@ const App = () => {
               </div>
               <div className='row'>
                 <div className='col-12'>
-                  <p id='time-left'>{display}</p>
+                  <p id='time-left'>{convTime(display)}</p>
                 </div>
               </div>
             </div>
