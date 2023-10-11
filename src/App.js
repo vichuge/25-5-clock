@@ -2,11 +2,26 @@ import { ArrowDownCircleFill, ArrowRepeat, ArrowUpCircleFill, PauseCircleFill, P
 import './App.scss';
 import { useEffect, useState, useRef } from 'react';
 
+const WORK = 5;
+const REST = 3;
+
 const App = () => {
-  const [rest, setRest] = useState(3);
-  const [work, setWork] = useState(5);
+  const [rest, setRest] = useState(REST);
+  const [work, setWork] = useState(WORK);
   const [display, setDisplay] = useState(work);
   const [turn, setTurn] = useState('Session');
+  const [flow, setFlow] = useState(false);
+
+  // const convTime = (time) => {
+  //   const sec = time * 60;
+  //   const minutes = Math.floor(sec / 60);
+  //   const seconds = sec - minutes * 60;
+  //   return pad(minutes) + ':' + pad(seconds);
+  // };
+
+  // const pad = (d) => {
+  //   return (d < 10) ? '0' + d.toString() : d.toString();
+  // }
 
   const upRest = () => {
     setRest(rest + 1);
@@ -25,21 +40,28 @@ const App = () => {
   };
 
   const play = () => {
-    console.log('I enter on play');
-    console.log(turn);
+    console.log('I enter play');
+    if (flow === false) {
+      setFlow(true);
+      console.log('I enter on play');
+      console.log(turn);
       let interval = setInterval(update, 1000);
       localStorage.clear();
       localStorage.setItem('interval-id', interval);
+    } else {
+      pause();
+    }
   };
 
   const pause = () => {
     console.log('I click pause');
+    setFlow(false);
     clearInterval(localStorage.getItem('interval-id'));
   }
 
   const update = () => {
     console.log('I enter on update');
-    console.log('display='+display);
+    console.log('display=' + display);
     if (display > 0) {
       setDisplay((display) => display - 1);
     } else {
@@ -57,9 +79,13 @@ const App = () => {
   }
 
   const repeat = () => {
-    // setTurn('Session');
+    setTurn('Session');
     setDisplay(work);
-    pause();
+    if (flow === true) {
+      play();
+    }
+    setRest(REST);
+    setWork(WORK);
   };
 
   useEffect(() => {
@@ -68,7 +94,7 @@ const App = () => {
 
   useEffect(() => {
     if (display < 0) {
-      pause();
+      // play();
       console.log('I enter on useEffect and I pause');
       console.log(display);
       update();
@@ -77,12 +103,13 @@ const App = () => {
 
   const isInitialMount = useRef(true);
   useEffect(() => {
-  if (isInitialMount.current) {
-     isInitialMount.current = false;
-  } else {
-      play();
-  }
-}, [turn]);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      console.log('I enter on useEffect for turn');
+      // play();
+    }
+  }, [turn]);
 
   return (
     <div className="container">
@@ -98,36 +125,36 @@ const App = () => {
             <div className='col-3'>
               <div className='row'>
                 <div className='col-12'>
-                  <h3>Break Length</h3>
+                  <h3 id='break-label'>Break Length</h3>
                 </div>
               </div>
               <div className='row'>
                 <div className='col-4'>
-                  <ArrowDownCircleFill color="#ffb145" size={30} onClick={downRest} />
+                  <ArrowDownCircleFill id='break-decrement' color="#ffb145" size={30} onClick={downRest} />
                 </div>
                 <div className='col-4'>
-                  <p>{rest}</p>
+                  <p id='break-length'>{rest}</p>
                 </div>
                 <div className='col-4'>
-                  <ArrowUpCircleFill color="#ffb145" size={30} onClick={upRest} />
+                  <ArrowUpCircleFill id='break-increment' color="#ffb145" size={30} onClick={upRest} />
                 </div>
               </div>
             </div>
             <div className='col-3'>
               <div className='row'>
                 <div className='col-12'>
-                  <h3>Session Length</h3>
+                  <h3 id='session-label'>Session Length</h3>
                 </div>
               </div>
               <div className='row'>
                 <div className='col-4'>
-                  <ArrowDownCircleFill color="#ffb145" size={30} onClick={downWork} />
+                  <ArrowDownCircleFill id='session-decrement' color="#ffb145" size={30} onClick={downWork} />
                 </div>
                 <div className='col-4'>
-                  <p>{work}</p>
+                  <p id='session-length'>{work}</p>
                 </div>
                 <div className='col-4'>
-                  <ArrowUpCircleFill color="#ffb145" size={30} onClick={upWork} />
+                  <ArrowUpCircleFill id='session-increment' color="#ffb145" size={30} onClick={upWork} />
                 </div>
               </div>
             </div>
@@ -138,29 +165,27 @@ const App = () => {
             <div className='col-4 session'>
               <div className='row'>
                 <div className='col-12'>
-                  <h2>{turn}</h2>
+                  <h2 id='timer-label'>{turn}</h2>
                 </div>
               </div>
               <div className='row'>
                 <div className='col-12'>
-                  <p>{display}</p>
+                  <p id='time-left'>{display}</p>
                 </div>
               </div>
             </div>
             <div className='col-4'></div>
           </div>
           <div className='row mb-4 mt-3'>
-            <div className='col-3'></div>
-            <div className='col-2'>
-              <PlayCircleFill color="#ffb145" size={30} onClick={play} />
+            <div className='col-5'></div>
+            <div className='col-1' id='start_stop' onClick={play}>
+              <PlayCircleFill color="#ffb145" size={25} />
+              <PauseCircleFill color="#ffb145" size={25} />
             </div>
-            <div className='col-2'>
-              <PauseCircleFill color="#ffb145" size={30} onClick={pause} />
+            <div className='col-1'>
+              <ArrowRepeat id='reset' color="#ffb145" size={30} onClick={repeat} />
             </div>
-            <div className='col-2'>
-              <ArrowRepeat color="#ffb145" size={30} onClick={repeat} />
-            </div>
-            <div className='col-3'></div>
+            <div className='col-5'></div>
           </div>
         </div>
       </div>
