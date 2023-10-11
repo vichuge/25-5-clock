@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/25-5-clock/static/css/main.a1cb4523.css",
+    "main.js": "/25-5-clock/static/js/main.9258b14c.js",
+    "static/media/pupu_tururu.mp3": "/25-5-clock/static/media/pupu_tururu.75a00550c01e711cae3e.mp3",
+    "index.html": "/25-5-clock/index.html",
+    "main.a1cb4523.css.map": "/25-5-clock/static/css/main.a1cb4523.css.map",
+    "main.9258b14c.js.map": "/25-5-clock/static/js/main.9258b14c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a1cb4523.css",
+    "static/js/main.9258b14c.js"
+  ]
+}
