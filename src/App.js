@@ -1,6 +1,6 @@
 import { ArrowDownCircleFill, ArrowRepeat, ArrowUpCircleFill, PauseCircleFill, PlayCircleFill } from 'react-bootstrap-icons';
 import './App.scss';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import sound from './pupu_tururu.mp3';
 
 const WORK = 1500;
@@ -14,7 +14,7 @@ const App = () => {
   const [display, setDisplay] = useState(work);
   const [turn, setTurn] = useState('Session');
   const [flow, setFlow] = useState(false);
-  const [breakAudio, setBreakAudio] = useState(new Audio(sound));
+  const [breakAudio] = useState(new Audio(sound));
 
   const playBreakSound = () => {
     breakAudio.currentTime = 0;
@@ -22,7 +22,6 @@ const App = () => {
   }
 
   const convTime = (sec) => {
-    // const sec = time * 60;
     const minutes = Math.floor(sec / 60);
     const seconds = sec - minutes * 60;
     return pad(minutes) + ':' + pad(seconds);
@@ -57,11 +56,8 @@ const App = () => {
   };
 
   const play = () => {
-    console.log('I enter play');
     if (flow === false) {
       setFlow(true);
-      console.log('I enter on play');
-      console.log(turn);
       let interval = setInterval(update, 1000);
       localStorage.clear();
       localStorage.setItem('interval-id', interval);
@@ -71,25 +67,19 @@ const App = () => {
   };
 
   const pause = () => {
-    console.log('I click pause');
     setFlow(false);
     clearInterval(localStorage.getItem('interval-id'));
   }
 
   const update = () => {
-    console.log('I enter on update');
-    console.log('display=' + display);
     if (display > 0) {
       setDisplay((display) => display - 1);
     } else {
-      console.log('I enter on else in update function when display <= 0');
       playBreakSound();
       if (turn === 'Session') {
-        console.log('change turn to break');
         setTurn('Break');
         setDisplay(rest);
       } else {
-        console.log('change turn to session');
         setTurn('Session');
         setDisplay(work);
       }
@@ -112,22 +102,9 @@ const App = () => {
 
   useEffect(() => {
     if (display < 0) {
-      // play();
-      console.log('I enter on useEffect and I pause');
-      console.log(display);
       update();
     }
   }, [display]);
-
-  const isInitialMount = useRef(true);
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-    } else {
-      console.log('I enter on useEffect for turn');
-      // play();
-    }
-  }, [turn]);
 
   return (
     <div className="container">
